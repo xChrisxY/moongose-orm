@@ -1,0 +1,33 @@
+# Archivos y directorios generados automáticamente
+node_modules/
+package-lock.json
+.env
+
+# Logs y archivos temporales
+logs/
+*.log
+npm-debug.log*
+
+# Directorio de compilación o producción (si corresponde)
+build/
+dist/
+out/
+
+# Archivos de configuración personalizados
+config.js
+config.json
+
+# Archivos de sesiones (si usas sesiones en Express)
+sessions/
+
+# Archivos específicos del IDE o editor de código
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+*.swo
+
+# Archivos de respaldo
+*~
+*.bak
+*.backup
