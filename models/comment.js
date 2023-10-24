@@ -1,20 +1,19 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
-
-      contenido : String,
-      fechaCreacion : Date,
-      publicacion : {
+      contenido: String,
+      fechaCreacion: Date,
+      publicacion: {
 
             type: mongoose.Schema.Types.ObjectId,
-            ref : 'Post'
+            ref: 'Post'
 
       },
 
-      usuario : {
+      usuario: {
 
-            type : mongoose.Schema.Types.ObjectId,
-            ref : 'Usuario'
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Usuario'
 
       }
 

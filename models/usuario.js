@@ -1,9 +1,15 @@
 const mongoose = require('mongoose');
 
-const usuarioSchema = new mongoose.model({
+const usuarioSchema = new mongoose.Schema({
 
-      nombre : String,
-      email : String
+      nombre: {
+            type: String,
+            required: true
+      },
+      email: {
+            type: String,
+            required: true,
+      },
 
 });
 
