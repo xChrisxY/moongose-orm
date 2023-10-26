@@ -38,8 +38,18 @@ const updateComentario = async (req, res) => {
   }
 };
 
+const findComentariosPorPublicacion = (req, res) => {
+    const publicacionId = req.params.publicacionId;
+  
+    CommentSchema
+      .find({ PublicacionId: publicacionId })
+      .then((data) => res.json(data))
+      .catch((error) => res.json({ message: error }));
+  };
+
 module.exports = {
   getComentarios,
   postComentario,
   updateComentario,
+  findComentariosPorPublicacion
 };

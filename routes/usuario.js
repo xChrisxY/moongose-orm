@@ -1,24 +1,15 @@
-const express = require('express')
-const usuarioSchema = require('../models/usuario')
+const express = require('express');
+const Usuario = require('../models/usuario'); // Asegúrate de importar el modelo correcto
+const { getUsuario, postUsuario, updateUsuario, findUsuariosPorEmail } = require('../controllers/usuarioControllers');
 const router = express.Router();
 
-//Método para agregar un usuario
-router.post('/usuario', (req, res) => {
-    const user = usuarioSchema(req.body);
-    console.log(user);  
-    user
-        .save()
-        .then((data) => res.send(`Se ha creado el usuario correctamente: ${data}`))
-        .catch((error) => res.json({ message: error }))
-})
+router.post('/usuario', postUsuario);
 
-router.get('/usuario', (req, res) => {
-    usuarioSchema
-        .find({})
-        .then((data) => res.json(data))
-        .catch((error) => res.json({ message: error }))
-})
+router.get('/usuario', getUsuario);
 
+router.put('/update-usuario/:id', updateUsuario);
 
+// Metodo para buscar usuarios por email
+router.get('/usuario/buscarPorEmail/:email', buscarUsuariosPorEmail);
 
-module.exports=router;
+module.exports = router;
