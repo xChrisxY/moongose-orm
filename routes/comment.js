@@ -48,6 +48,22 @@ router.put('/update-comment/:id', async (req, res) => {
 
 });
 
+router.delete("/comment/:fechaCreacion/:publicacion", async (req, res) => {
+  const { fechaCreacion, publicacion } = req.params;
+
+  try {
+    const comentarioAEliminar = await CommentSchema.findOne({ fechaCreacion, publicacion });
+    if (!comentarioAEliminar) {
+      return res.status(404).json({ message: 'Comentario no encontrado' });
+    }
+    await comentarioAEliminar.deleteOne();
+    return res.json({ message: 'Comentario eliminado ' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error al eliminar el comentario' });
+  }
+});
+
 
 
 module.exports=router;
