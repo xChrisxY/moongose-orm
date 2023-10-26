@@ -11,6 +11,8 @@ const usuarioSchema = new mongoose.Schema({
             required: true,
       },
 
+}, {
+      versionKey : false
 });
 
 module.exports = mongoose.model('Usuario', usuarioSchema);

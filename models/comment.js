@@ -17,6 +17,8 @@ const commentSchema = new mongoose.Schema({
 
       }
 
+}, {
+      versionKey : false
 });
 
 module.exports = mongoose.model('Comment', commentSchema);

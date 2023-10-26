@@ -11,6 +11,8 @@ const postSchema = new mongoose.Schema({
             ref: 'Usuario'
       }
 
+}, {
+      versionKey : false
 });
 
 module.exports = mongoose.model('Post', postSchema);

@@ -1,18 +1,21 @@
 const express = require('express');
+require('dotenv').config()
 
 const app = express();
+app.use(express.json());
+const PORT = process.env.PORT || 3000
 
 const connectToDatabase = require('./connection/connect');
 
-require('dotenv').config()
-
 connectToDatabase();
 
-const PORT = process.env.PORT || 3000
 
-
-const usuario=require('./routes/usuario')
+const usuario = require('./routes/usuario')
+const publicacion = require('./routes/post')
+const comentario = require('./routes/comment')
 app.use('/api',usuario);
+app.use('/api', publicacion);
+app.use('/api', comentario);
 
 app.listen(PORT, () => {
 
