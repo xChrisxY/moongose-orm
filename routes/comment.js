@@ -1,8 +1,6 @@
 const express = require('express');
-const CommentSchema = require('../models/comment');
-const { getComentarios, postComentario, updateComentario, findComentariosPorPublicacion } = require('../controllers/commentControllers'); 
+const { getComentarios, postComentario, updateComentario, findComentariosPorPublicacion, deleteCommentsByDate } = require('../controllers/commentControllers');
 const router = express.Router();
-
 
 router.post('/comentario', postComentario);
 
@@ -12,5 +10,8 @@ router.put('/update-comment/:id', updateComentario);
 
 // Metodo para buscar comentarios por publicación
 router.get('/buscarPorPublicacion/:publicacionId', findComentariosPorPublicacion);
+
+//Método para eliminar comentario por fecha y publicación
+router.delete("/comment/:fechaCreacion/:publicacion", deleteCommentsByDate);
 
 module.exports = router;
