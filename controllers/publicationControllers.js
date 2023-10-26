@@ -45,8 +45,18 @@ const updatePublications = async (req, res) => {
   
   }
 
+  const findPublicationPorUsuario = (req, res) => {
+    const usuarioId = req.params.usuarioId; 
+  
+    PublicationSchema
+      .find({ UsuarioId: usuarioId }) 
+      .then((data) => res.json(data))
+      .catch((error) => res.json({ message: error }));
+  }
+
 module.exports = {
 
+      findPublicationPorUsuario,
       getPublications,
       postPublications,
       updatePublications
