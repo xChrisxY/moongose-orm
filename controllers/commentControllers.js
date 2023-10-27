@@ -55,24 +55,18 @@ const updateComentario = async (req, res) => {
 
   try {
     
-    const idComentario = req.params.id;
-    const newContenido = req.body.contenido;
+    const { contenido } = req.body;
+    const postId = req.params.id;
 
-    const updatedComentario = await CommentSchema.findByIdAndUpdate(
-      idComentario,
-      { contenido: newContenido },
-      { new: true }
-    );
+    await CommentSchema.updateOne({ _id: postId }, { $set: { contenido } });
 
-    if (!updatedComentario) {
-      return res.status(404).json({ message: "Comentario no encontrado" });
-    }
+    res.json({ message: 'Comentario modificado con éxito' });
 
-    console.log(`Comentario actualizado exitosamente: ${updatedComentario}`);
-    return res.status(200).json(`Comentario actualizado exitosamente`);
   } catch (error) {
+
     console.log(`Error al actualizar el comentario: ${error}`);
     return res.status(500).json({ message: 'Error al actualizar el comentario' });
+    
   }
 };
 

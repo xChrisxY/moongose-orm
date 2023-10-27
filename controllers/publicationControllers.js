@@ -50,30 +50,19 @@ const postPublications = async (req, res) => {
 const updatePublications = async (req, res) => {
 
     try {
-        const idPublication = req.params.id;
-        const newContent = req.body.contenido;
+        const { contenido } = req.body;
+        const postId = req.params.id;
+    
+        await PublicationSchema.updateOne({ _id: postId }, { $set: { contenido } });
+    
+        res.json({ message: 'Publicación modificada con éxito' });
 
-        const updateUser = await PublicationSchema.findByIdAndUpdate(
-            idPublication,
-            { contenido: newContent },
-            { new: true }
-        );
+      } catch (error) {
 
-        if (!idPublication) {
+        console.error('Error al modificar la publicación:', error);
+        res.status(500).json({ error: 'Error al modificar la publicación' });
 
-            return res.status(404).json({ message: "Publication not found" })
-
-        }
-
-        console.log(`Publication update succesfully: ${updateUser}`);
-        return res.status(200).json(`Publication update succesfully`);
-
-    } catch (error) {
-
-        console.log(`Error al actualizar el usuario: ${error}`);
-        return res.status(500).json({ message: 'Error al actualizar la publicación' });
-
-    }
+      }
 
 }
 
