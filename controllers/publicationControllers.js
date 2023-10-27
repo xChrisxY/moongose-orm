@@ -1,5 +1,6 @@
 const PublicationSchema = require('../models/post');
 const usuarioSchema = require('../models/usuario')
+const comentarioSchema = require('../models/comment')
 
 const getPublications = (req, res) => {
     PublicationSchema
@@ -9,17 +10,17 @@ const getPublications = (req, res) => {
 }
 
 const postPublications = async (req, res) => {
-    
+
     try {
 
-        const {titulo, contenido} = req.body;
+        const { titulo, contenido } = req.body;
         const { id } = req.params;
-        
+
         const usuario = await usuarioSchema.findById(id);
 
         if (!usuario) {
 
-            return res.status(404).json({ error : 'Usuario no encontrado'});
+            return res.status(404).json({ error: 'Usuario no encontrado' });
 
         }
 
@@ -27,7 +28,7 @@ const postPublications = async (req, res) => {
 
             titulo,
             contenido,
-            fechaCreacion : Date.now()
+            fechaCreacion: Date.now()
 
         });
 
@@ -37,12 +38,12 @@ const postPublications = async (req, res) => {
         await usuario.save();
 
         res.status(201).json(nuevaPublicacion);
-        
+
     } catch (error) {
 
         console.error('Error al crear la publicación:', error);
         res.status(500).json({ error: 'Error al crear la publicación' });
-        
+
     }
 
 }
@@ -52,17 +53,17 @@ const updatePublications = async (req, res) => {
     try {
         const { contenido } = req.body;
         const postId = req.params.id;
-    
+
         await PublicationSchema.updateOne({ _id: postId }, { $set: { contenido } });
-    
+
         res.json({ message: 'Publicación modificada con éxito' });
 
-      } catch (error) {
+    } catch (error) {
 
         console.error('Error al modificar la publicación:', error);
         res.status(500).json({ error: 'Error al modificar la publicación' });
 
-      }
+    }
 
 }
 
@@ -81,15 +82,19 @@ const deletePublicationByDate = async (req, res) => {
     try {
         const postAEliminar = await PublicationSchema.findOne({ fechaCreacion });
         if (!postAEliminar) {
-            return res.status(404).json({ message: 'publicacion no encontrada' });
+            return res.status(404).json({ message: 'Publicación no encontrada' });
         }
-        await postAEliminar.deleteOne()
-        return res.json({ message: 'publicacion eliminada ' });
+        const comentarios = postAEliminar.comentarios;
+        await postAEliminar.deleteOne();
+        await comentarioSchema.deleteMany({ _id: { $in: comentarios } });
+
+        return res.json({ message: 'Publicación eliminada' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Error al eliminar la publicacion' });
+        return res.status(500).json({ message: 'Error al eliminar la publicación' });
     }
 }
+
 
 module.exports = {
 

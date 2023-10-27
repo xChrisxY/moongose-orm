@@ -13,7 +13,7 @@ const getUsuario = (req, res) => {
 const postUsuario = async (req, res) => {
 
   try {
-    
+
     const { nombre, email } = req.body;
 
     const nuevoUsuario = new usuarioSchema({
@@ -68,17 +68,24 @@ const findUsuariosPorEmail = (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { id } = req.params.id
-  
+  const { id } = req.params;
+
   try {
-    await usuarioSchema.deleteOne({ id })
-    // await comentarioSchema.deleteMany({ id })
-    // await publicacionSchema.deleteMany({ id })
-    res.send("eliminado correctamente")
+   
+    const usuario = await usuarioSchema.findById(id);
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    const publicacionIds = usuario.publicaciones;
+    await usuario.deleteOne();
+    await publicacionSchema.deleteMany({ _id: { $in: publicacionIds } });
+
+    res.send("Usuario eliminado ");
   } catch (error) {
-    res.status(500).json({ massage: "error al eliminar usuario" })
+    res.status(500).json({ message: "Error al eliminar el usuario " });
   }
 }
+
 
 
 module.exports = {
