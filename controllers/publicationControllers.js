@@ -66,14 +66,22 @@ const updatePublications = async (req, res) => {
 
 }
 
-const findPublicationPorUsuario = (req, res) => {
-    const usuarioId = req.params.usuarioId;
-
-    PublicationSchema
-        .find({ usuario: usuarioId })
-        .then((data) => res.json(data))
-        .catch((error) => res.json({ message: error }));
-}
+const findPublicacionesPorUsuario = async (req, res) => {
+    const userId = req.params.userId; 
+  
+    try {
+      const publicacionesEncontradas = await Post.find({ usuario: userId });
+  
+      if (publicacionesEncontradas.length === 0) {
+        return res.status(404).json({ mensaje: 'No se encontraron publicaciones para este usuario.' });
+      }
+  
+      res.status(200).json(publicacionesEncontradas);
+    } catch (error) {
+      console.error('Error al buscar publicaciones por usuario:', error);
+      res.status(500).json({ mensaje: 'Error interno del servidor' });
+    }
+  };
 
 const deletePublicationByDate = async (req, res) => {
     const { fechaCreacion } = req.params;
@@ -93,7 +101,7 @@ const deletePublicationByDate = async (req, res) => {
 
 module.exports = {
 
-    findPublicationPorUsuario,
+    findPublicacionesPorUsuario,
     getPublications,
     postPublications,
     updatePublications,

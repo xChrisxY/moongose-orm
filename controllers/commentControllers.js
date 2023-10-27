@@ -70,14 +70,23 @@ const updateComentario = async (req, res) => {
   }
 };
 
-const findComentariosPorPublicacion = (req, res) => {
-  const publicacionId = req.params.publicacionId;
+const findComentariosPorPublicacion = async (req, res) => {
+  const postId = req.params.postId;
 
-  CommentSchema
-    .find({ PublicacionId: publicacionId })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const comentariosEncontrados = await Comment.find({ post: postId });
+
+    if (comentariosEncontrados.length === 0) {
+      return res.status(404).json({ mensaje: 'No se encontraron comentarios para esta publicación.' });
+    }
+
+    res.status(200).json(comentariosEncontrados);
+  } catch (error) {
+    console.error('Error al buscar comentarios por publicación:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
 };
+
 
 const deleteCommentsByDate = async (req, res) => {
   const { fechaCreacion, publicacion } = req.params;

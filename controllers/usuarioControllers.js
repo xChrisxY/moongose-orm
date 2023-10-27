@@ -58,13 +58,21 @@ const updateUsuario = async (req, res) => {
   }
 };
 
-const findUsuariosPorEmail = (req, res) => {
-  const email = req.params.email;
+const findUsuariosPorEmail = async (req, res) => {
+  const emailABuscar = req.params.email; 
 
-  usuario
-    .find({ email: email })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const usuariosEncontrados = await Usuario.find({ email: emailABuscar });
+
+    if (usuariosEncontrados.length === 0) {
+      return res.status(404).json({ mensaje: 'No se encontraron usuarios con ese correo electrónico.' });
+    }
+
+    res.status(200).json(usuariosEncontrados);
+  } catch (error) {
+    console.error('Error al buscar usuarios por correo electrónico:', error);
+    res.status(500).json({ mensaje: 'Error interno del servidor' });
+  }
 };
 
 const deleteUser = async (req, res) => {
