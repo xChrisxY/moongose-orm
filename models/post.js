@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
+const CommentSchema = require('./comment');
 
 const postSchema = new mongoose.Schema({
       
       titulo: String,
       contenido: String,
       fechaCreacion: Date,
-      usuario: {
+      comentarios : [{
 
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Usuario'
-      }
+            ref : 'Comment'
+
+      }]
 
 }, {
       versionKey : false

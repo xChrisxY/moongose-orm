@@ -1,4 +1,7 @@
 const CommentSchema = require('../models/comment');
+const publicationSchema = require('../models/post');
+const usuarioSchema = require('../models/usuario');
+
 
 const getComentarios = (req, res) => {
   CommentSchema
@@ -7,16 +10,51 @@ const getComentarios = (req, res) => {
     .catch((error) => res.json({ message: error }));
 };
 
-const postComentario = (req, res) => {
-  const comentario = new CommentSchema(req.body);
-  comentario
-    .save()
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+const postComentario = async (req, res) => {
+
+  try {
+
+    const { contenido } = req.body;
+    const publicacionId = req.params.id;
+
+    console.log(publicacionId)
+
+    const publicacion = await publicationSchema.findById(publicacionId);
+
+    if (!publicacion) {
+
+      return res.status(404).json({ error : 'Publicación no encontrada'})
+
+    }
+
+    const nuevoComentario = new CommentSchema({
+
+      contenido,
+      fechaCreacion: Date.now(),
+      publicacion : publicacion._id
+
+    });
+
+    const comentarioGuardado = await nuevoComentario.save();
+    publicacion.comentarios.push(comentarioGuardado._id);
+
+    await publicacion.save();
+
+    res.status(201).json(comentarioGuardado);
+
+  } catch (error) {
+
+    console.log(`Error al crear el comentario: ${error}`);
+    res.status(404).json({ error : 'error al crear el comentario'});
+
+  }
+
 };
 
 const updateComentario = async (req, res) => {
+
   try {
+    
     const idComentario = req.params.id;
     const newContenido = req.body.contenido;
 

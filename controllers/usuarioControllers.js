@@ -1,7 +1,7 @@
 const usuario = require('../models/usuario');
 const usuarioSchema = require('../models/usuario');
-const comentarioSchema=require('../models/comment')
-const publicacionSchema=require('../models/post')
+const comentarioSchema = require('../models/comment')
+const publicacionSchema = require('../models/post')
 
 const getUsuario = (req, res) => {
   usuarioSchema
@@ -10,12 +10,29 @@ const getUsuario = (req, res) => {
     .catch((error) => res.json({ message: error }));
 }
 
-const postUsuario = (req, res) => {
-  const comentario = new usuarioSchema(req.body);
-  usuario
-    .save()
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+const postUsuario = async (req, res) => {
+
+  try {
+    
+    const { nombre, email } = req.body;
+
+    const nuevoUsuario = new usuarioSchema({
+
+      nombre,
+      email
+
+    });
+
+    const usuarioGuardado = await nuevoUsuario.save();
+
+    res.status(201).json(usuarioGuardado);
+
+  } catch (error) {
+
+    console.error('Error al crear el usuario:', error);
+    res.status(500).json({ error: 'Error al crear el usuario' });
+  }
+
 };
 
 const updateUsuario = async (req, res) => {
@@ -23,7 +40,7 @@ const updateUsuario = async (req, res) => {
     const idComentario = req.params.id;
     const newContenido = req.body.contenido;
 
-    const updatedComentario = await CommentSchema.findByIdAndUpdate(
+    const updatedComentario = await comentarioSchema.findByIdAndUpdate(
       idComentario,
       { contenido: newContenido },
       { new: true }
@@ -41,7 +58,6 @@ const updateUsuario = async (req, res) => {
   }
 };
 
-
 const findUsuariosPorEmail = (req, res) => {
   const email = req.params.email;
 
@@ -53,10 +69,11 @@ const findUsuariosPorEmail = (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { id } = req.params.id
+  
   try {
-    await comentarioSchema.deleteMany({ id })
-    await publicacionSchema.deleteMany({ id })
     await usuarioSchema.deleteOne({ id })
+    // await comentarioSchema.deleteMany({ id })
+    // await publicacionSchema.deleteMany({ id })
     res.send("eliminado correctamente")
   } catch (error) {
     res.status(500).json({ massage: "error al eliminar usuario" })

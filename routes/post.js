@@ -3,7 +3,7 @@ const { getPublications, postPublications, updatePublications, findPublicationPo
 const router = express.Router();
 
 // Método para agregar una publicación
-router.post('/post', postPublications);
+router.post('/post/:id', postPublications);
 
 router.get('/post', getPublications);
 

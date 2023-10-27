@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const publicacionSchema = require('./post');
 
 const usuarioSchema = new mongoose.Schema({
 
@@ -10,6 +11,12 @@ const usuarioSchema = new mongoose.Schema({
             type: String,
             required: true,
       },
+
+      publicaciones : [{
+
+            type: mongoose.Schema.Types.ObjectId,
+            ref : 'Post'
+      }]
 
 }, {
       versionKey : false

@@ -2,7 +2,7 @@ const express = require('express');
 const { getComentarios, postComentario, updateComentario, findComentariosPorPublicacion, deleteCommentsByDate } = require('../controllers/commentControllers');
 const router = express.Router();
 
-router.post('/comentario', postComentario);
+router.post('/comentario/:id', postComentario);
 
 router.get('/comentario', getComentarios);
 
