@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const CommentSchema = require('./comment');
+
 
 const postSchema = new mongoose.Schema({
       
@@ -16,5 +16,15 @@ const postSchema = new mongoose.Schema({
 }, {
       versionKey : false
 });
+
+postSchema.pre('remove', async function(next) {
+
+      const comentarioSchema = require('../models/comment')
+    
+      await comentarioSchema.deleteMany({ _id: { $in: this.comentarios } });
+    
+      next();
+      
+    });
 
 module.exports = mongoose.model('Post', postSchema);

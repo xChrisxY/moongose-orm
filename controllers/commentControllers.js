@@ -111,22 +111,3 @@ module.exports = {
   findComentariosPorPublicacion,
   deleteCommentsByDate
 };
-
-
-// if (!idComment) {
-
-//   return res.status(404).json({ message: "Comment not found" })
-
-// }
-
-// console.log(`Comment update succesfully: ${updateComment}`);
-// return res.status(200).json(`Comment update succesfully`);
-
-// } catch (error) {
-
-//   console.log(`Error al actualizar el usuario: ${error}`);
-//   return res.status(500).json({ message: 'Error al actualizar la publicación' });
-
-// }
-
-// });
