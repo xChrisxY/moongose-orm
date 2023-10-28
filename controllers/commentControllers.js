@@ -87,22 +87,22 @@ const findComentariosPorPublicacion = async (req, res) => {
   }
 };
 
-
 const deleteCommentsByDate = async (req, res) => {
   const { fechaCreacion, publicacion } = req.params;
 
   try {
-    const comentarioAEliminar = await CommentSchema.findOne({ fechaCreacion, publicacion });
-    if (!comentarioAEliminar) {
+    const publicacionB = await publicationSchema.findById(publicacion);
+    if (!publicacionB) {
       return res.status(404).json({ message: 'Comentario no encontrado' });
     }
-    await comentarioAEliminar.deleteOne();
+    await CommentSchema.findOneAndDelete({ fechaCreacion, _id: { $in: publicacionB.comentarios } });
     return res.json({ message: 'Comentario eliminado ' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Error al eliminar el comentario' });
   }
 }
+
 
 module.exports = {
   getComentarios,
