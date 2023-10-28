@@ -96,6 +96,7 @@ const deletePublicationByDate = async (req, res) => {
             return res.status(404).json({ error: 'Publicación no encontrada' });
         }
 
+        await comentarioSchema.deleteMany({ _id: { $in: publicacion.comentarios } });
         await publicacion.deleteOne();
 
         res.status(200).json({ message: 'Publicación eliminada' });

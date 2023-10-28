@@ -1,3 +1,4 @@
+const comment = require('../models/comment');
 const CommentSchema = require('../models/comment');
 const publicationSchema = require('../models/post');
 const usuarioSchema = require('../models/usuario');
@@ -23,7 +24,7 @@ const postComentario = async (req, res) => {
 
     if (!publicacion) {
 
-      return res.status(404).json({ error : 'Publicación no encontrada'})
+      return res.status(404).json({ error: 'Publicación no encontrada' })
 
     }
 
@@ -31,7 +32,7 @@ const postComentario = async (req, res) => {
 
       contenido,
       fechaCreacion: Date.now(),
-      publicacion : publicacion._id
+      publicacion: publicacion._id
 
     });
 
@@ -45,7 +46,7 @@ const postComentario = async (req, res) => {
   } catch (error) {
 
     console.log(`Error al crear el comentario: ${error}`);
-    res.status(404).json({ error : 'error al crear el comentario'});
+    res.status(404).json({ error: 'error al crear el comentario' });
 
   }
 
@@ -54,7 +55,7 @@ const postComentario = async (req, res) => {
 const updateComentario = async (req, res) => {
 
   try {
-    
+
     const { contenido } = req.body;
     const postId = req.params.id;
 
@@ -66,7 +67,7 @@ const updateComentario = async (req, res) => {
 
     console.log(`Error al actualizar el comentario: ${error}`);
     return res.status(500).json({ message: 'Error al actualizar el comentario' });
-    
+
   }
 };
 
@@ -88,15 +89,23 @@ const findComentariosPorPublicacion = async (req, res) => {
 };
 
 const deleteCommentsByDate = async (req, res) => {
-  const { fechaCreacion, publicacion } = req.params;
-
+  const  fechaCreacion  = new Date(req.params.fechaCreacion)
+  const  publicacion  = req.params.publicacion
   try {
     const publicacionB = await publicationSchema.findById(publicacion);
     if (!publicacionB) {
       return res.status(404).json({ message: 'Comentario no encontrado' });
     }
-    await CommentSchema.findOneAndDelete({ fechaCreacion, _id: { $in: publicacionB.comentarios } });
-    return res.json({ message: 'Comentario eliminado ' });
+    const comentarioB = await CommentSchema.findOne({ fechaCreacion: { $gte: fechaCreacion } })
+    let comentarioAEliminar = null; 
+
+publicacionB.comentarios.forEach(function(coment) {
+  if (coment.equals(comentarioB.id)) {
+    comentarioAEliminar = coment;
+  }
+});
+  await CommentSchema.findByIdAndDelete(comentarioAEliminar)
+    return res.json({message:"eliminado"});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Error al eliminar el comentario' });
