@@ -68,41 +68,45 @@ const updatePublications = async (req, res) => {
 }
 
 const findPublicacionesPorUsuario = async (req, res) => {
-    const userId = req.params.userId; 
-  
+    const userId = req.params.userId;
+
     try {
-      const publicacionesEncontradas = await Post.find({ usuario: userId });
-  
-      if (publicacionesEncontradas.length === 0) {
-        return res.status(404).json({ mensaje: 'No se encontraron publicaciones para este usuario.' });
-      }
-  
-      res.status(200).json(publicacionesEncontradas);
+        const publicacionesEncontradas = await PublicationSchema.find({ usuario: userId });
+
+        if (publicacionesEncontradas.length === 0) {
+            return res.status(404).json({ mensaje: 'No se encontraron publicaciones para este usuario.' });
+        }
+
+        res.status(200).json(publicacionesEncontradas);
     } catch (error) {
-      console.error('Error al buscar publicaciones por usuario:', error);
-      res.status(500).json({ mensaje: 'Error interno del servidor' });
+        console.error('Error al buscar publicaciones por usuario:', error);
+        res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
-  };
+};
 
 const deletePublicationByDate = async (req, res) => {
-    const { fechaCreacion } = req.params;
 
     try {
-        const postAEliminar = await PublicationSchema.findOne({ fechaCreacion });
-        if (!postAEliminar) {
-            return res.status(404).json({ message: 'Publicación no encontrada' });
-        }
-        const comentarios = postAEliminar.comentarios;
-        await postAEliminar.deleteOne();
-        await comentarioSchema.deleteMany({ _id: { $in: comentarios } });
 
-        return res.json({ message: 'Publicación eliminada' });
+        const fechaCreacion = new Date(req.params.fechaCreacion);
+
+        const publicacion = await PublicationSchema.findOne({ fechaCreacion: { $gte: fechaCreacion } });
+
+        if (!publicacion) {
+            return res.status(404).json({ error: 'Publicación no encontrada' });
+        }
+
+        await publicacion.deleteOne();
+
+        res.status(200).json({ message: 'Publicación eliminada' });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error al eliminar la publicación' });
+
+        console.error('Error al eliminar la publicación:', error);
+        res.status(500).json({ error: 'Error al eliminar la publicación' });
+
     }
 }
-
 
 module.exports = {
 

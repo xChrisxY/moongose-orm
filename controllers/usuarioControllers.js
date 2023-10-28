@@ -36,33 +36,38 @@ const postUsuario = async (req, res) => {
 };
 
 const updateUsuario = async (req, res) => {
+  
   try {
-    const idComentario = req.params.id;
-    const newContenido = req.body.contenido;
+    const userId = req.params.id;
+    const { nombre, email } = req.body;
 
-    const updatedComentario = await comentarioSchema.findByIdAndUpdate(
-      idComentario,
-      { contenido: newContenido },
-      { new: true }
-    );
+    const usuario = await usuarioSchema.findById(userId);
 
-    if (!updatedComentario) {
-      return res.status(404).json({ message: "Comentario no encontrado" });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    console.log(`Comentario actualizado exitosamente: ${updatedComentario}`);
-    return res.status(200).json(`Comentario actualizado exitosamente`);
+    
+    usuario.nombre = nombre;
+    usuario.email = email;
+
+    await usuario.save();
+
+    res.status(200).json({ usuario });
+
   } catch (error) {
-    console.log(`Error al actualizar el comentario: ${error}`);
-    return res.status(500).json({ message: 'Error al actualizar el comentario' });
+
+    console.error('Error al actualizar el usuario:', error);
+    res.status(500).json({ error: 'Error al actualizar el usuario' });
+
   }
 };
 
 const findUsuariosPorEmail = async (req, res) => {
-  const emailABuscar = req.params.email; 
+  const emailABuscar = req.params.email;
 
   try {
-    const usuariosEncontrados = await Usuario.find({ email: emailABuscar });
+    const usuariosEncontrados = await usuarioSchema.find({ email: emailABuscar });
 
     if (usuariosEncontrados.length === 0) {
       return res.status(404).json({ mensaje: 'No se encontraron usuarios con ese correo electrónico.' });
@@ -79,7 +84,7 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-   
+
     const usuario = await usuarioSchema.findById(id);
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
