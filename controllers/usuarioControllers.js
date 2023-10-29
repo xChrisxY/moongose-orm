@@ -36,7 +36,7 @@ const postUsuario = async (req, res) => {
 };
 
 const updateUsuario = async (req, res) => {
-  
+
   try {
     const userId = req.params.id;
     const { nombre, email } = req.body;
@@ -47,7 +47,7 @@ const updateUsuario = async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    
+
     usuario.nombre = nombre;
     usuario.email = email;
 
@@ -90,10 +90,12 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
     const publicacionIds = usuario.publicaciones;
-    await usuario.deleteOne();
+    const post = await publicacionSchema.findById({ $in: publicacionIds })
+    const allComents = post.comentarios;
+    await comentarioSchema.deleteMany({ _id: { $in: allComents } })
     await publicacionSchema.deleteMany({ _id: { $in: publicacionIds } });
-
-    res.send("Usuario eliminado ");
+    await usuario.deleteOne();
+    res.send({ message:"usuario eliminado" });
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el usuario " });
   }
